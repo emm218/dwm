@@ -261,6 +261,7 @@ static pid_t winpid(Window w);
 /* variables */
 static const char broken[] = "broken";
 static char stext[256];
+static char *ctext;
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh;               /* bar height */
@@ -803,6 +804,7 @@ void
 drawbar(Monitor *m)
 {
 	int x, w, tw = 0;
+	int tlpad;
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
 
@@ -834,11 +836,16 @@ drawbar(Monitor *m)
 	w = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
-
+  
 	if ((w = m->ww - tw - x) > bh) {
 			drw_setscheme(drw, scheme[SchemeNorm]);
 			drw_rect(drw, x, 0, w, bh, 1, 1);
 	}
+
+	tlpad = MAX((m->ww - ((int)TEXTW(ctext) - lrpad)) / 2 - x, lrpad / 2);
+	drw_text(drw, x, 0, w, bh, tlpad, ctext, 0);
+	
+	
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
 
@@ -2095,8 +2102,17 @@ updatesizehints(Client *c)
 void
 updatestatus(void)
 {
-	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
+	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext))) {
 		strcpy(stext, "dwm-"VERSION);
+	}
+	ctext = stext;
+	while (*ctext) {
+		if (*ctext == '\n') {
+			*ctext++ = '\0';
+			break;
+		}
+		ctext++;
+	}
 	drawbar(selmon);
 }
 
