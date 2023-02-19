@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -12,9 +14,9 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static       int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10:anti-alias=true:autohint=true", 
-	                                      "NotoColorEmoji:size=10:antialias=true:autohint=true" };
-static const char dmenufont[]       = "monospace:size=10";
+static const char *fonts[]          = { "monospace:size=14:anti-alias=true:autohint=true", 
+	                                      "NotoColorEmoji:size=14:antialias=true:autohint=true" };
+static const char dmenufont[]       = "monospace:size=14";
 static const char col_fg[]          = "#cdd6f4";
 static const char col_fg2[]         = "#a6e3a1";
 static const char col_bg1[]         = "#1e1e2e";
@@ -74,6 +76,9 @@ static const Layout layouts[] = {
 /* commands */
 static const char *screenshot[] = { "scrot", "/home/anon/pics/screenshots/%Y-%m-%d-%H%M%S.png", NULL };
 static const char *termcmd[] = {"tabbed", "-r", "2", "st", "-w", "''", NULL };
+static const char *upvol[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%",     NULL };
+static const char *downvol[] = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%",     NULL };
+static const char *mutevol[] = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@", "toggle",  NULL };
 
 #include "shiftview.c"
 
@@ -91,6 +96,10 @@ static const Key keys[] = {
 	{ MODKEY, XK_z,			 spawn,          {.v = (const char*[]){ "dmenu-playlists", "-z", DMENU_COLORS, NULL } } },
 	{ MODKEY|ShiftMask,  XK_z,    spawn, {.v = (const char*[]){ "dmenu-playlists", DMENU_COLORS, NULL } } },
 	
+	{ 0,                 XF86XK_AudioLowerVolume, spawn, {.v = downvol } },
+	{ 0,                 XF86XK_AudioMute, 				spawn, {.v = mutevol } },
+	{ 0,                 XF86XK_AudioRaiseVolume, spawn, {.v = upvol   } },
+
 	/* modifier                     key        function        argument */
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ControlMask,           XK_z,      spawn,          {.v = (const char*[]){ "shuffle-albums", NULL } } },
