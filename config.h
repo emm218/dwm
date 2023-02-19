@@ -28,7 +28,15 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" , "10" };
+
+static const char *const autostart[] = {
+	"dwmblocks", NULL,
+	"mpdas", NULL,
+	"mpdup", NULL,
+	"tabbed", "-r", "2", "st", "-w", "''", NULL,
+	NULL /* terminate */
+};
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -86,12 +94,14 @@ static const Key keys[] = {
 	{ MODKEY, XK_grave,	 spawn,	         {.v = (const char*[]){ "dmenu-emoji", DMENU_COLORS, NULL } } },
 	{ MODKEY, XK_d,      spawn,          {.v = (const char*[]){ "dmenu_run", DMENU_COLORS, NULL } } },
 	{ MODKEY|ShiftMask, XK_d,     spawn, {.v = (const char*[]){ "passmenu", DMENU_COLORS, NULL } } },
-	{ MODKEY, XK_Print,  spawn,          {.v = screenshot } },
 	{ MODKEY, XK_s,      spawn,          {.v = (const char*[]){ "st", "newsboat", NULL }  } },
 	{ MODKEY, XK_a,      spawn,          {.v = (const char*[]){ "st", "ncmpcpp" , NULL }  } },
+	{ MODKEY, XK_e,      spawn,          {.v = (const char*[]){ "st", "aerc" , NULL }  } },
+	{ MODKEY|ShiftMask, XK_e,     spawn, {.v = (const char*[]){ "st", "-c", "xmpp", "profanity" , NULL }  } },
 	{ MODKEY, XK_p,      					spawn, {.v = (const char*[]){ "mpc", "toggle", NULL }  } },
 	{ MODKEY, XK_bracketleft,     spawn, {.v = (const char*[]){ "mpc", "prev", NULL }  } },
 	{ MODKEY,	XK_bracketright,    spawn, {.v = (const char*[]){ "mpc", "next", NULL }  } },
+	{ MODKEY,	XK_backslash,				spawn, {.v = (const char*[]){ "mpc", "clear", NULL }  } },
 	{ MODKEY, XK_x,			 spawn,          {.v = (const char*[]){ "dmenu-radio", DMENU_COLORS, NULL } } },
 	{ MODKEY, XK_z,			 spawn,          {.v = (const char*[]){ "dmenu-playlists", "-z", DMENU_COLORS, NULL } } },
 	{ MODKEY|ShiftMask,  XK_z,    spawn, {.v = (const char*[]){ "dmenu-playlists", DMENU_COLORS, NULL } } },
@@ -102,6 +112,7 @@ static const Key keys[] = {
 
 	/* modifier                     key        function        argument */
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,												XK_Print,	 spawn,          {.v = screenshot } },
 	{ MODKEY|ControlMask,           XK_z,      spawn,          {.v = (const char*[]){ "shuffle-albums", NULL } } },
 	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -116,10 +127,9 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,						XK_comma,  cyclelayout,    {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_period, cyclelayout,    {.i = +1 } },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY|ShiftMask,             XK_f,      togglefullscr,  {0} },
+	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -128,7 +138,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
 	{ MODKEY,              					XK_u,      incrgaps,       {.i = +1 } },
 	{ MODKEY|ShiftMask,    					XK_u,      incrgaps,       {.i = -1 } },
-	{ MODKEY|ControlMask, 						  XK_u,      defaultgaps,    {0} },
+	{ MODKEY|ControlMask, 					XK_u,      defaultgaps,    {0} },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
