@@ -14,9 +14,9 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static       int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=14:anti-alias=true:autohint=true", 
-	                                      "NotoColorEmoji:size=14:antialias=true:autohint=true" };
-static const char dmenufont[]       = "monospace:size=14";
+static const char *fonts[]          = { "monospace:size=12:anti-alias=true:autohint=true", 
+	                                      "NotoColorEmoji:size=12:antialias=true:autohint=true" };
+static const char dmenufont[]       = "monospace:size=12";
 static const char col_fg[]          = "#cdd6f4";
 static const char col_fg2[]         = "#a6e3a1";
 static const char col_bg1[]         = "#1e1e2e";
@@ -48,6 +48,7 @@ static const Rule rules[] = {
 	{ "st",      NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "tabbed",  NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "Signal",  NULL,     NULL,           1 << 3,    0,          0,          -1,        -1 },
+	{ NULL,      "qemu",   NULL,           0,         1,          0,          -1,        -1 },
 };
 
 /* layout(s) */
@@ -82,8 +83,9 @@ static const Layout layouts[] = {
 #define DMENU_COLORS "-fn", dmenufont, "-nb", col_bg2, "-nf", col_fg, "-sb", col_bg1, "-sf", col_fg2
 
 /* commands */
-static const char *screenshot[] = { "scrot", "/home/anon/pics/screenshots/%Y-%m-%d-%H%M%S.png", NULL };
 static const char *termcmd[] = {"tabbed", "-r", "2", "st", "-w", "''", NULL };
+static const char *upbright[] 	= {"xbacklight", "+2", NULL};
+static const char *downbright[] = {"xbacklight", "-2", NULL};
 static const char *upvol[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%",     NULL };
 static const char *downvol[] = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%",     NULL };
 static const char *mutevol[] = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@", "toggle",  NULL };
@@ -91,32 +93,37 @@ static const char *mutevol[] = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@", "
 #include "shiftview.c"
 
 static const Key keys[] = {
-	{ MODKEY, XK_grave,	 spawn,	         {.v = (const char*[]){ "dmenu-emoji", DMENU_COLORS, NULL } } },
-	{ MODKEY, XK_d,      spawn,          {.v = (const char*[]){ "dmenu_run", DMENU_COLORS, NULL } } },
+	{ MODKEY, XK_grave,	      spawn, {.v = (const char*[]){ "dmenu-emoji", DMENU_COLORS, NULL } } },
+	{ MODKEY, XK_d,               spawn, {.v = (const char*[]){ "dmenu_run", DMENU_COLORS, NULL } } },
 	{ MODKEY|ShiftMask, XK_d,     spawn, {.v = (const char*[]){ "passmenu", DMENU_COLORS, NULL } } },
-	{ MODKEY, XK_s,      spawn,          {.v = (const char*[]){ "st", "newsboat", NULL }  } },
-	{ MODKEY, XK_a,      spawn,          {.v = (const char*[]){ "st", "ncmpcpp" , NULL }  } },
-	{ MODKEY, XK_e,      spawn,          {.v = (const char*[]){ "st", "aerc" , NULL }  } },
+	{ MODKEY, XK_s,               spawn, {.v = (const char*[]){ "st", "newsboat", NULL }  } },
+	{ MODKEY, XK_a,               spawn, {.v = (const char*[]){ "st", "ncmpcpp" , NULL }  } },
+	{ MODKEY, XK_e,               spawn, {.v = (const char*[]){ "st", "aerc" , NULL }  } },
 	{ MODKEY|ShiftMask, XK_e,     spawn, {.v = (const char*[]){ "st", "-c", "xmpp", "profanity" , NULL }  } },
-	{ MODKEY, XK_p,      					spawn, {.v = (const char*[]){ "mpc", "toggle", NULL }  } },
+	{ MODKEY, XK_p,               spawn, {.v = (const char*[]){ "mpc", "toggle", NULL }  } },
 	{ MODKEY, XK_bracketleft,     spawn, {.v = (const char*[]){ "mpc", "prev", NULL }  } },
-	{ MODKEY,	XK_bracketright,    spawn, {.v = (const char*[]){ "mpc", "next", NULL }  } },
-	{ MODKEY,	XK_backslash,				spawn, {.v = (const char*[]){ "mpc", "clear", NULL }  } },
-	{ MODKEY, XK_x,			 spawn,          {.v = (const char*[]){ "dmenu-radio", DMENU_COLORS, NULL } } },
-	{ MODKEY, XK_z,			 spawn,          {.v = (const char*[]){ "dmenu-playlists", "-z", DMENU_COLORS, NULL } } },
+	{ MODKEY, XK_bracketright,    spawn, {.v = (const char*[]){ "mpc", "next", NULL }  } },
+	{ MODKEY, XK_backslash,	      spawn, {.v = (const char*[]){ "mpc", "clear", NULL }  } },
+	{ MODKEY, XK_w,               spawn, {.v = (const char*[]){ "dmenu-notes", DMENU_COLORS, NULL } } },
+	{ MODKEY, XK_x,               spawn, {.v = (const char*[]){ "dmenu-radio", DMENU_COLORS, NULL } } },
+	{ MODKEY, XK_z,               spawn, {.v = (const char*[]){ "dmenu-playlists", "-z", DMENU_COLORS, NULL } } },
 	{ MODKEY|ShiftMask,  XK_z,    spawn, {.v = (const char*[]){ "dmenu-playlists", DMENU_COLORS, NULL } } },
 	
-	{ 0,                 XF86XK_AudioLowerVolume, spawn, {.v = downvol } },
-	{ 0,                 XF86XK_AudioMute, 				spawn, {.v = mutevol } },
-	{ 0,                 XF86XK_AudioRaiseVolume, spawn, {.v = upvol   } },
+    	{ 0, XF86XK_MonBrightnessUp,   spawn, {.v = upbright}},
+    	{ 0, XF86XK_MonBrightnessDown, spawn, {.v = downbright}},
+	{ 0, XF86XK_AudioLowerVolume,  spawn, {.v = downvol } },
+	{ 0, XF86XK_AudioMute, 	       spawn, {.v = mutevol } },
+	{ 0, XF86XK_AudioRaiseVolume,  spawn, {.v = upvol   } },
 
 	/* modifier                     key        function        argument */
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,												XK_Print,	 spawn,          {.v = screenshot } },
+	{ MODKEY,			XK_Print,  spawn,          {.v = (const char*[]){ "dmenu-maim", NULL } } },
 	{ MODKEY|ControlMask,           XK_z,      spawn,          {.v = (const char*[]){ "shuffle-albums", NULL } } },
 	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+    	{ MODKEY|ControlMask,           XK_j,      pushdown,       {0}},
+    	{ MODKEY|ControlMask,           XK_k,      pushup,         {0}},
 	{ MODKEY,                       XK_o,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_o,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
@@ -124,7 +131,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY|ControlMask,						XK_comma,  cyclelayout,    {.i = -1 } },
+	{ MODKEY|ControlMask,           XK_comma,  cyclelayout,    {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_period, cyclelayout,    {.i = +1 } },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
@@ -136,9 +143,9 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY,              					XK_u,      incrgaps,       {.i = +1 } },
-	{ MODKEY|ShiftMask,    					XK_u,      incrgaps,       {.i = -1 } },
-	{ MODKEY|ControlMask, 					XK_u,      defaultgaps,    {0} },
+	{ MODKEY,              		XK_u,      incrgaps,       {.i = +1 } },
+	{ MODKEY|ShiftMask,    		XK_u,      incrgaps,       {.i = -1 } },
+	{ MODKEY|ControlMask, 		XK_u,      defaultgaps,    {0} },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -149,7 +156,7 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	{ MODKEY|ShiftMask,							XK_r,      quit,           {1} }, 
+	{ MODKEY|ShiftMask,		XK_r,      quit,           {1} }, 
 	{ MODKEY,                       XK_n,      shiftview,      {.i = +1} },
 	{ MODKEY,                       XK_b,      shiftview,      {.i = -1} },
 };
