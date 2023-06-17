@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-
+/* clang-format off */
 #include <X11/XF86keysym.h>
 
 /* appearance */
@@ -17,8 +17,8 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=12:anti-alias=true:autohint=true", 
 	                                      "NotoColorEmoji:size=12:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=12";
-static const char col_fg[]          = "#cdd6f4";
-static const char col_fg2[]         = "#a6e3a1";
+static const char col_fg[]          = "#f8f8f2";
+static const char col_fg2[]         = "#50fa7b";
 static const char col_bg1[]         = "#1e1e2e";
 static const char col_bg2[]         = "#11111b";
 static const char *colors[][3]      = {
@@ -34,7 +34,6 @@ static const char *const autostart[] = {
 	"dwmblocks", NULL,
 	"mpdas", NULL,
 	"mpdup", NULL,
-	"tabbed", "-r", "2", "st", "-w", "''", NULL,
 	NULL /* terminate */
 };
 
@@ -46,9 +45,9 @@ static const Rule rules[] = {
 	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "Firefox", NULL,     NULL,           1 << 1,    0,          0,          -1,        -1 },
 	{ "st",      NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "float",   NULL,     NULL,           0,         1,          1,           0,        -1 },
 	{ "tabbed",  NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ "Signal",  NULL,     NULL,           1 << 3,    0,          0,          -1,        -1 },
-	{ NULL,      "qemu",   NULL,           0,         1,          0,          -1,        -1 },
 };
 
 /* layout(s) */
@@ -117,7 +116,7 @@ static const Key keys[] = {
 
 	/* modifier                     key        function        argument */
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,			XK_Print,  spawn,          {.v = (const char*[]){ "dmenu-maim", NULL } } },
+	{ MODKEY,			XK_Print,  spawn,          {.v = (const char*[]){ "dmenu-maim", DMENU_COLORS, NULL } } },
 	{ MODKEY|ControlMask,           XK_z,      spawn,          {.v = (const char*[]){ "shuffle-albums", NULL } } },
 	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -175,4 +174,4 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
+/* clang-format on */
